@@ -1,151 +1,366 @@
-# Authentication API
+# News Aggregator API
 
-This project implements a basic user authentication system using Node.js, Express, bcrypt for password hashing, and JWT for authentication tokens.
+A RESTful API for news aggregation with user authentication, preferences management, and news retrieval capabilities.
+
+## Overview
+
+This News Aggregator API provides a complete solution for news management with the following capabilities:
+
+- **User Authentication**: Secure user registration and login with JWT tokens
+- **User Preferences**: Manage user news preferences and categories
+- **News Retrieval**: Get personalized news based on user preferences from GNews API
+- **Data Validation**: Robust input validation and error handling
+- **In-Memory Storage**: JSON-based user data storage
+- **Testing**: Comprehensive test suite with tap framework
 
 ## Features
 
-- User Registration with hashed passwords
-- User Login with password verification
-- JWT token generation on successful login
-- Environment variable configuration
-- Testing endpoints with Postman
+### Core Features
+- ✅ User registration and authentication
+- ✅ JWT token-based security (1 hour expiration)
+- ✅ User preferences management
+- ✅ News retrieval from GNews API
+- ✅ Password hashing and validation
+- ✅ Input validation and error handling
 
----
+### Advanced Features
+- ✅ Secure password handling with bcrypt
+- ✅ Token-based authorization middleware
+- ✅ User preference customization
+- ✅ News filtering by user preferences
+- ✅ Comprehensive error handling
+- ✅ Email format validation
 
-## Requirements
+## Installation and Setup
 
-- Node.js (>= 14.x)
-- npm or yarn
-- MongoDB (local or cloud e.g. MongoDB Atlas)
-- Postman (for API testing)
+### Prerequisites
+- Node.js (version 18 or higher)
+- npm (comes with Node.js)
+- GNews API key (for news retrieval)
 
----
+### Setup Instructions
 
-## Installation
+1. **Clone or navigate to the project directory:**
+```bash
+cd news-aggregator-api-nik-1207
+```
 
-1. **Clone the repository**
+2. **Install dependencies:**
+```bash
+npm install
+```
 
-   ```bash
-   git clone <your-repo-url>
-   cd <your-project-directory>
-   ```
+3. **Set up environment variables:**
+   Create a `.env` file in the root directory:
+```env
+JWT_SECRET=your-super-secret-jwt-key-here
+API_KEY=your-gnews-api-key-here
+```
 
-2. **Install dependencies**
-
-   ```bash
-   npm install
-   ```
-
-3. **Create `.env` file** in the root directory with the following variables:
-
-   ```env
-   PORT=5000
-   MONGO_URI=mongodb://localhost:27017/authdb
-   JWT_SECRET=your_jwt_secret_key
-   ```
-
-4. **Run the server**
-   ```bash
-   npm start
-   ```
-   or for development with auto-reload:
-   ```bash
-   npm run dev
-   ```
-
----
+4. **Run tests:**
+```bash
+npm test
+```
 
 ## API Endpoints
 
-### 1. Register User
+### Authentication Endpoints
 
-**POST** `/register`  
-Registers a new user and stores the hashed password in the database.
+#### POST /users/signup
+Register a new user account.
 
 **Request Body:**
-
 ```json
 {
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "yourpassword"
+  "name": "Clark Kent",
+  "email": "clark@superman.com",
+  "password": "Krypt()n8",
+  "preferences": ["movies", "comics"]
 }
 ```
 
-**Success Response:**
+**Validation Rules:**
+- `name`: Required, minimum 3 characters, non-empty string
+- `email`: Required, valid email format
+- `password`: Required, minimum 6 characters
+- `preferences`: Optional, must be an array
 
+**Success Response (200):**
 ```json
 {
   "message": "User registered successfully",
   "user": {
-    "id": "64d2a1f5b2c5f45f48b8e123",
-    "name": "John Doe",
-    "email": "john@example.com"
+    "id": 1,
+    "name": "Clark Kent",
+    "email": "clark@superman.com",
+    "preferences": ["movies", "comics"]
   }
 }
 ```
 
----
-
-### 2. Login User
-
-**POST** `/login`  
-Authenticates the user and returns a JWT token if credentials are valid.
-
-**Request Body:**
-
+**Error Response (400):**
 ```json
 {
-  "email": "john@example.com",
-  "password": "yourpassword"
+  "message": "Email, password and name are required"
 }
 ```
 
-**Success Response:**
-
+**Error Response (409):**
 ```json
 {
-  "message": "Login successful",
+  "message": "User already exists"
+}
+```
+
+#### POST /users/login
+Authenticate user and receive JWT token.
+
+**Request Body:**
+```json
+{
+  "email": "clark@superman.com",
+  "password": "Krypt()n8"
+}
+```
+
+**Success Response (200):**
+```json
+{
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
-**Error Response:**
-
+**Error Response (400):**
 ```json
 {
-  "message": "Invalid email or password"
+  "message": "Email and password are required"
 }
 ```
 
----
+**Error Response (401):**
+```json
+{
+  "message": "Invalid password"
+}
+```
 
-## Password Hashing
+**Error Response (404):**
+```json
+{
+  "message": "User not found"
+}
+```
 
-- Passwords are hashed using **bcrypt** before storing in the database.
-- On login, bcrypt's `compare` function is used to verify the password.
+### User Preferences Endpoints
 
----
+#### GET /users/preferences
+Retrieve user's news preferences.
 
-## Testing with Postman
+**Headers:**
+```
+Authorization: Bearer <jwt_token>
+```
 
-1. Start the server using:
+**Success Response (200):**
+```json
+{
+  "message": "User preference fetch succesfully",
+  "preferences": ["movies", "comics"]
+}
+```
 
-   ```bash
-   npm start
-   ```
+**Error Response (401):**
+```json
+{
+  "message": "No token provided"
+}
+```
 
-2. Open Postman and create a collection.
-3. Add requests for:
-   - POST `/register`
-   - POST `/login`
-   - GET `/preferences`
-   - PUT `/preferences`
-   - GET `/news`
-4. Send JSON in the request body as shown above.
+#### PUT /users/preferences
+Update user's news preferences (adds new preferences to existing ones).
 
----
+**Headers:**
+```
+Authorization: Bearer <jwt_token>
+```
 
-## License
+**Request Body:**
+```json
+{
+  "preferences": ["movies", "comics", "games"]
+}
+```
 
-This project is licensed under the MIT License.
+**Success Response (200):**
+```json
+{
+  "message": "Preferences updated successfully",
+  "preferences": ["movies", "comics", "games"]
+}
+```
+
+**Note:** This endpoint merges new preferences with existing ones, removing duplicates.
+
+### News Endpoints
+
+#### GET /news
+Retrieve personalized news based on user preferences from GNews API.
+
+**Headers:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Success Response (200):**
+```json
+{
+  "news": [
+    {
+      "title": "Latest Movie News",
+      "description": "Exciting updates from the movie industry...",
+      "url": "https://example.com/news",
+      "image": "https://example.com/image.jpg",
+      "publishedAt": "2024-01-01T00:00:00.000Z",
+      "source": {
+        "name": "News Source"
+      }
+    }
+  ]
+}
+```
+
+**Error Response (401):**
+```json
+{
+  "message": "No token provided"
+}
+```
+
+**Error Response (404):**
+```json
+{
+  "message": "No news found for the given preferences"
+}
+```
+
+## Data Models
+
+### User Schema
+```json
+{
+  "id": 1,
+  "name": "Clark Kent",
+  "email": "clark@superman.com",
+  "password": "hashed_password",
+  "preferences": ["movies", "comics"]
+}
+```
+
+### News Schema (from GNews API)
+```json
+{
+  "title": "News Title",
+  "description": "News description",
+  "url": "https://example.com/news",
+  "image": "https://example.com/image.jpg",
+  "publishedAt": "2024-01-01T00:00:00.000Z",
+  "source": {
+    "name": "News Source"
+  }
+}
+```
+
+## Project Structure
+
+```
+news-aggregator-api-nik-1207/
+├── app.js                    # Main application file
+├── package.json              # Dependencies and scripts
+├── README.md                 # This documentation
+├── user.json                 # Initial user data (in-memory storage)
+├── .env                      # Environment variables (create this)
+├── src/                      # Source code
+│   ├── routes/               # API route handlers
+│   │   ├── user.routes.js    # User authentication routes
+│   │   └── news.routes.js    # News retrieval routes
+│   ├── controllers/          # Route controllers
+│   │   ├── user.controller.js # User operations
+│   │   └── news.controller.js # News operations
+│   ├── middlewares/          # Express middleware
+│   │   └── verifyJWT.middleware.js # JWT authentication middleware
+│   └── utils/                # Utility functions
+│       └── passwordHandler.js # Password hashing utilities
+└── test/                     # Test files
+    └── server.test.js        # API tests
+```
+
+## Technology Stack
+
+- **Node.js** - Runtime environment
+- **Express.js** - Web framework
+- **JSON** - In-memory data storage
+- **JWT** - Authentication tokens
+- **bcrypt** - Password hashing
+- **axios** - HTTP client for GNews API
+- **dotenv** - Environment configuration
+- **tap** - Testing framework
+- **supertest** - HTTP testing
+- **nodemon** - Development auto-reload
+
+## Error Handling
+
+The API includes comprehensive error handling:
+- **400 Bad Request** - Invalid input data or missing required fields
+- **401 Unauthorized** - Invalid or missing authentication token
+- **404 Not Found** - User or news not found
+- **409 Conflict** - User already exists
+- **500 Internal Server Error** - Server errors (e.g., GNews API issues)
+
+All errors return a consistent format:
+```json
+{
+  "message": "Error description"
+}
+```
+
+## Security Features
+
+- **Password Hashing**: All passwords are hashed using bcrypt with salt rounds of 10
+- **JWT Authentication**: Secure token-based authentication with 1-hour expiration
+- **Input Validation**: Robust validation of all input data
+- **Environment Variables**: Sensitive data stored in environment variables
+- **Middleware Protection**: JWT verification middleware for protected routes
+
+## Development
+
+### Running Tests
+
+```bash
+npm test
+```
+
+### Available Scripts
+- `npm test` - Run all tests
+- `npm start` - Start the production server
+- `npm run dev` - Start development server with auto-reload using nodemon
+
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+# JWT Configuration
+JWT_SECRET=your-super-secret-jwt-key-here
+
+# GNews API Configuration
+API_KEY=your-gnews-api-key-here
+```
+
+## Initial User Data
+
+The application comes with pre-loaded user data in `user.json`:
+
+- **Bruce Wayne** (bruce@batman.com) - Preferences: gadgets, martial arts
+- **Diana Prince** (diana@wonderwoman.com) - Preferences: history, combat
+- **Barry Allen** (barry@flash.com) - Preferences: running, science
+- **Arthur Curry** (arthur@aquaman.com) - Preferences: swimming, marine life
