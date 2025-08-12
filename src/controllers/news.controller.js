@@ -3,7 +3,7 @@ const axios = require("axios");
 const getNews = async (req, res) => {
   const preferences = req.user.preferences;
   const apiKey = process.env.API_KEY;
-  const query = preferences.join("OR");
+  const query = preferences.join(" OR ");
   const endpoint = `https://gnews.io/api/v4/search?q=${query}&apikey=${apiKey}`;
   try {
     const response = await axios.get(endpoint);
@@ -17,7 +17,7 @@ const getNews = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "News fetch succesfully", news: articles });
+      .json({news: articles });
   } catch (error) {
     return res
       .status(500)
