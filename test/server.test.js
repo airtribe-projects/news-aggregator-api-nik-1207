@@ -20,67 +20,68 @@ tap.test("POST /users/signup", async (t) => {
   t.end();
 });
 
-// tap.test("POST /users/signup with missing email", async (t) => {
-//   const response = await server.post("/users/signup").send({
-//     name: mockUser.name,
-//     password: mockUser.password,
-//   });
-//   t.equal(response.status, 400);
-//   t.end();
-// });
+tap.test("POST /users/signup with missing email", async (t) => {
+  const response = await server.post("/users/signup").send({
+    name: mockUser.name,
+    password: mockUser.password,
+  });
+  t.equal(response.status, 400);
+  t.end();
+});
 
-// tap.test("POST /users/login", async (t) => {
-//   const response = await server.post("/users/login").send({
-//     email: mockUser.email,
-//     password: mockUser.password,
-//   });
-//   t.equal(response.status, 200);
-//   t.hasOwnProp(response.body, "token");
-//   token = response.body.token;
-//   t.end();
-// });
+tap.test("POST /users/login", async (t) => {
+  const response = await server.post("/users/login").send({
+    email: mockUser.email,
+    password: mockUser.password,
+  });
+  t.equal(response.status, 200);
+  t.hasOwnProp(response.body, "token");
+  token = response.body.token;
+  t.end();
+});
 
-// tap.test("POST /users/login with wrong password", async (t) => {
-//   const response = await server.post("/users/login").send({
-//     email: mockUser.email,
-//     password: "wrongpassword",
-//   });
-//   t.equal(response.status, 401);
-//   t.end();
-// });
+tap.test("POST /users/login with wrong password", async (t) => {
+  const response = await server.post("/users/login").send({
+    email: mockUser.email,
+    password: "wrongpassword",
+  });
+  t.equal(response.status, 401);
+  t.end();
+});
 
 // // Preferences tests
 
-// tap.test("GET /users/preferences", async (t) => {
-//   const response = await server
-//     .get("/users/preferences")
-//     .set("Authorization", `Bearer ${token}`);
-//   t.equal(response.status, 200);
-//   t.hasOwnProp(response.body, "preferences");
-//   t.same(response.body.preferences, mockUser.preferences);
-//   t.end();
-// });
+tap.test("GET /users/preferences", async (t) => {
+  const response = await server
+    .get("/users/preferences")
+    .set("Authorization", `Bearer ${token}`);
+  t.equal(response.status, 200);
+  t.hasOwnProp(response.body, "preferences");
+  t.same(response.body.preferences, mockUser.preferences);
+  t.end();
+});
 
-// tap.test("GET /users/preferences without token", async (t) => {
-//   const response = await server.get("/users/preferences");
-//   t.equal(response.status, 401);
-//   t.end();
-// });
+tap.test("GET /users/preferences without token", async (t) => {
+  const response = await server.get("/users/preferences");
+  t.equal(response.status, 401);
+  t.end();
+});
 
-// tap.test("PUT /users/preferences", async (t) => {
-//   const response = await server
-//     .put("/users/preferences")
-//     .set("Authorization", `Bearer ${token}`)
-//     .send({
-//       preferences: ["movies", "comics", "games"],
-//     });
-//   t.equal(response.status, 200);
-// });
+tap.test("PUT /users/preferences", async (t) => {
+  const response = await server
+    .put("/users/preferences")
+    .set("Authorization", `Bearer ${token}`)
+    .send({
+      preferences: ["movies", "comics", "games"],
+    });
+  t.equal(response.status, 200);
+});
 
 // tap.test("Check PUT /users/preferences", async (t) => {
 //   const response = await server
 //     .get("/users/preferences")
 //     .set("Authorization", `Bearer ${token}`);
+  
 //   t.equal(response.status, 200);
 //   t.same(response.body.preferences, ["movies", "comics", "games"]);
 //   t.end();
@@ -97,11 +98,11 @@ tap.test("POST /users/signup", async (t) => {
 //   t.end();
 // });
 
-// tap.test("GET /news without token", async (t) => {
-//   const response = await server.get("/news");
-//   t.equal(response.status, 401);
-//   t.end();
-// });
+tap.test("GET /news without token", async (t) => {
+  const response = await server.get("/news");
+  t.equal(response.status, 401);
+  t.end();
+});
 
 tap.teardown(() => {
   process.exit(0);
