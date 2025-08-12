@@ -1,7 +1,7 @@
 const express = require("express");
 const userRoutes = require("./src/routes/user.routes");
 const newsRoutes = require("./src/routes/news.routes");
-const env = require("dotenv")
+const env = require("dotenv");
 
 env.config();
 const app = express();

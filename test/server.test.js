@@ -49,7 +49,7 @@ tap.test("POST /users/login with wrong password", async (t) => {
   t.end();
 });
 
-// // Preferences tests
+// Preferences tests
 
 tap.test("GET /users/preferences", async (t) => {
   const response = await server
@@ -77,26 +77,25 @@ tap.test("PUT /users/preferences", async (t) => {
   t.equal(response.status, 200);
 });
 
-// tap.test("Check PUT /users/preferences", async (t) => {
-//   const response = await server
-//     .get("/users/preferences")
-//     .set("Authorization", `Bearer ${token}`);
-  
-//   t.equal(response.status, 200);
-//   t.same(response.body.preferences, ["movies", "comics", "games"]);
-//   t.end();
-// });
+tap.test("Check PUT /users/preferences", async (t) => {
+  const response = await server
+    .get("/users/preferences")
+    .set("Authorization", `Bearer ${token}`);
+  t.equal(response.status, 200);
+  t.same(response.body.preferences, ["movies", "comics", "games"]);
+  t.end();
+});
 
-// // News tests
+// News tests
 
-// tap.test("GET /news", async (t) => {
-//   const response = await server
-//     .get("/news")
-//     .set("Authorization", `Bearer ${token}`);
-//   t.equal(response.status, 200);
-//   t.hasOwnProp(response.body, "news");
-//   t.end();
-// });
+tap.test("GET /news", async (t) => {
+  const response = await server
+    .get("/news")
+    .set("Authorization", `Bearer ${token}`);
+  t.equal(response.status, 200);
+  t.hasOwnProp(response.body, "news");
+  t.end();
+});
 
 tap.test("GET /news without token", async (t) => {
   const response = await server.get("/news");
