@@ -113,7 +113,7 @@ const updateUserPreferences = (req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
 
-  user.preferences = new Set([...user.preferences, ...preferences]);
+  user.preferences = Array.from(new Set([...user.preferences, ...preferences]));
 
   return res.status(200).json({
     message: "Preferences updated successfully",
